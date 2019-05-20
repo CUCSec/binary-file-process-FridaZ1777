@@ -1,12 +1,25 @@
 import struct
-
+import os
 
 def tamper(student_id):
-  pass
+  road = os.path.abspath(__file__)
+  road_list = os.path.dirname(road)
+  global realroad 
+  realroad = os.path.join(road_list,"lenna.bmp")
+  f = open(realroad,"r+b")
+  f.seek(54)
+  for i in range(0,12):
+    num = int(student_id[i])
+    if num == 0:
+      num = 10
+    f.seek(num*3,1)
+    f.write(bytes([0,0,0]))
+    f.seek(-3,1)
+  f.close()
 
 
 def detect():
-  with open('lenna.bmp', 'rb') as f:
+  with open(realroad, 'rb') as f:
     bmp_file_header = f.read(14)
 
     bm, size, r1, r2, offset = struct.unpack('<2sIHHI', bmp_file_header)
